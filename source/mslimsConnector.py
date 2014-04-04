@@ -63,6 +63,8 @@ for projIndex in range(nbProjects):
     with open('/mnt/compomics/Nicolas/Python/R2TF/data/project'
     +str(test[projIndex][0])+'.csv', 'w') as f:
         for i in range(nbSpectrum):
+            f.write(str(i))
+            f.write(separator)
             for j in range(nbVar):
                 f.write(str(test2[i][j]))
                 f.write(separator)
