@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Fri Mar 28 09:50:21 2014
 
@@ -20,10 +19,15 @@ df = read_csv(Location, names=VarNames, index_col='spectrumid')
 
 # Took me a while to find the right unction...
 df_reduced = df[pd.notnull(df['Sequence'].values)]
+df_reduced['New_Sequence'] = ""
+
+for indexing in df_reduced.index :
+    print df_reduced['Sequence'][indexing]
 
 # An example with a modification
-mod_seq = df_reduced['Sequence'][91726693]
-new_seq = mod_seq
+mod_seq = df_reduced['Sequence'][91749993]
+
+
 
 parser_index = 0
 writer_index = 0
@@ -49,10 +53,16 @@ TransformDataSet = zip(char_values,new_values)
 df = DataFrame(data = TransformDataSet, columns=['Old','New'])
 
 
-while(parser_index <= pep_length):
+while(parser_index < pep_length):
     if(n_term_parsing):
-        if(n_term_re.match(df['Old'][parser_index])):
-            df['New'][writer_index] = df['Old'][parser_index]
+        if(df['Old'][parser_index]=='N'):
+            if(df['Old'][parser_index+1]=='H'):
+                if(df['Old'][parser_index+2]=='2'):
+                    parser_index += 3
+                    df['New'][writer_index] = 'H'
+                    writer_index += 1
+        elif(n_term_re.match(df['Old'][parser_index])):
+            df['New'][writer_index] = df['Old'][parser_index].lower()
             parser_index += 1
             writer_index += 1
         elif(n_term_re2.match(df['Old'][parser_index])):
@@ -64,15 +74,23 @@ while(parser_index <= pep_length):
             temp_char = df['Old'][parser_index]
     elif(main_parsing):
         if(amino_parsing):
-            if(main_term_re.match(temp_char)):
+            if(df['Old'][parser_index] == "<"):
+                temp_char = df['Old'][parser_index-1]
+                amino_parsing = False
+                mod_parsing = True
+                parser_index += 1
+                writer_index -= 1
+            elif(main_term_re.match(temp_char)):
                 df['New'][writer_index] = temp_char
                 parser_index += 1
                 writer_index += 1
                 temp_char = df['Old'][parser_index]
-            elif(temp_char == "<"):
-                amino_parsing = False
-                mod_parsing = True
+            elif(temp_char == "-"):
+                df['New'][writer_index] = temp_char
                 parser_index += 1
+                writer_index += 1
+                main_parsing = False
+                c_term_parsing = True
         elif(mod_parsing):
             if(main_term_re2.match(df['Old'][parser_index])):
                 df['New'][writer_index] = df['Old'][parser_index].lower()
@@ -82,8 +100,30 @@ while(parser_index <= pep_length):
                 amino_parsing = True
                 mod_parsing = False
                 parser_index += 1
+                df['New'][writer_index] = temp_char
+                writer_index += 1
+                temp_char = df['Old'][parser_index]
             elif(df['Old'][parser_index] == "*"):
                 parser_index += 1
     elif(c_term_parsing):
-        pass
+        if(df['Old'][parser_index]=='C'):
+            if(df['Old'][parser_index+1]=='O'):
+                if(df['Old'][parser_index+2]=='O'):
+                    if(df['Old'][parser_index+3]=='H'):
+                        parser_index += 4
+                        df['New'][writer_index] = 'O'
+                        df['New'][writer_index+1] = 'H'
+                        writer_index += 1
+        c_term_parsing = False
+    else:
+        df['New'][writer_index] = df['Old'][parser_index].lower()
+        parser_index += 1
+        writer_index += 1
 
+new_seq = ""
+for i in range(pep_length):
+    new_seq += df['New'][i]
+
+from pyteomics import parser
+new_seq_2 = "Ac-QpyrQSEEDLLLQDFSR-OH"
+parser.parse(new_seq, allow_unknown_modifications=True)
