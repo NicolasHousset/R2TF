@@ -3,7 +3,7 @@ __author__ = 'compomics'
 import MySQLdb
 import pandas.io.sql as psql
 from pandas import DataFrame
-import pandas as pd
+
 
 def connect_to_mslims(_host, _user, _passwd, _db):
     """A function to connect to the MSLIMS database, returns the cursor"""
@@ -13,10 +13,17 @@ def connect_to_mslims(_host, _user, _passwd, _db):
                          db=_db)
     return mysql_cn
 
-con = connect_to_mslims("muppet03.ugent.be",
-                      "nicolas",
-                      "nicolas,13*",
-                      "projects")
+
+with open('/mnt/compomics/Nicolas/Python/etc/ms_lims.txt','r') as f :
+    host = f.readline().strip("\n")
+    user = f.readline().strip("\n")
+    passwd = f.readline().strip("\n")
+    db = f.readline().strip("\n")
+
+con = connect_to_mslims(host,
+                      user,
+                      passwd,
+                      db)
 
 def importProjNumbersFromMSLIMS(_con, _projNumber):
     """A function to extract one project"""

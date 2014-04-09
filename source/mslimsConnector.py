@@ -16,10 +16,10 @@ def connect_to_mslims(_host, _user, _passwd, _db):
     _cur = db.cursor()
     return _cur
 
-cur = connect_to_mslims("muppet03.ugent.be",
-                      "nicolas",
-                      "nicolas,13*",
-                      "projects")
+cur = connect_to_mslims("",
+                      "",
+                      "",
+                      "")
 
 def importProjNumbersFromMSLIMS(_cur, _projNumber):
     """A function to extract one project"""
