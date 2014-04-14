@@ -39,8 +39,8 @@ def importProjNumbersFromMSLIMS(_con, _projNumber):
 
 
 # We start with one project
-startingProject = 2000
-nbProjects = 12
+startingProject = 2094
+nbProjects = 1
 
 test = importProjNumbersFromMSLIMS(con, startingProject)
 VarNames = ['Sequence','rtsec','projectid','lcrunid','lcrun.name','spectrumid','instrumentid','protocolid','filecount',
@@ -101,6 +101,8 @@ for projIndex in range(nbProjects):
                     n_term_parsing = False
                     main_parsing = True
                     temp_char = df['Old'][parser_index]
+                elif(df['Old'][parser_index] == "*"):
+                    parser_index += 1
             elif(main_parsing):
                 if(amino_parsing):
                     if(df['Old'][parser_index] == "<"):
