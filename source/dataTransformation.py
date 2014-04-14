@@ -39,8 +39,8 @@ def importProjNumbersFromMSLIMS(_con, _projNumber):
 
 
 # We start with one project
-startingProject = 2094
-nbProjects = 1
+startingProject = 2395
+nbProjects = 600
 
 test = importProjNumbersFromMSLIMS(con, startingProject)
 VarNames = ['Sequence','rtsec','projectid','lcrunid','lcrun.name','spectrumid','instrumentid','protocolid','filecount',
@@ -58,6 +58,7 @@ for projIndex in range(nbProjects):
 
     for indexing in df_reduced.index:
         mod_seq = df_reduced['Sequence'][indexing]
+        # print mod_seq
         parser_index = 0
         writer_index = 0
         pep_length = len(mod_seq)
@@ -135,6 +136,8 @@ for projIndex in range(nbProjects):
                         writer_index += 1
                         temp_char = df['Old'][parser_index]
                     elif(df['Old'][parser_index] == "*"):
+                        parser_index += 1
+                    elif(df['Old'][parser_index] == ","):
                         parser_index += 1
             elif(c_term_parsing):
                 if(df['Old'][parser_index]=='C'):
