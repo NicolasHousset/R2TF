@@ -1,4 +1,4 @@
 R2TF
 ====
 
-Retention time and random forests, in R !
+Retention time and random forests, in Python !
